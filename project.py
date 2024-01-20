@@ -5,6 +5,7 @@ from datetime import datetime
 from datetime import timezone
 import dateutil.parser
 import streamlit as st
+
 def Api_connection():
     api_key='AIzaSyAi8H2meOsYFAbkZMWsxbBPc5RcJZLE-JA'
     api_service_name = "youtube"
@@ -12,6 +13,9 @@ def Api_connection():
     youtube = build(api_service_name, api_version, developerKey=api_key)
     return youtube
 youtube=Api_connection()
+
+#getting channel details of different youtube channels
+
 def channel_details(channel_id):  
     request = youtube.channels().list(part="snippet,contentDetails,statistics",id=channel_id)
     response = request.execute()
@@ -25,6 +29,8 @@ def channel_details(channel_id):
                   channel_subs=i['statistics']['subscriberCount'],
                   channel_videos=i['statistics']['videoCount'])
     return data
+#getting videoid details of videos available in channel
+
 def get_channel_videoid(channel_id):
     Video_ids=[]
     request = youtube.channels().list(id=channel_id,part='contentDetails').execute()
@@ -36,6 +42,9 @@ def get_channel_videoid(channel_id):
     for i in range(len(response1['items'])):
         Video_ids.append(response1['items'][i]['snippet']['resourceId']['videoId'])
     return Video_ids
+    
+#getting video details of videos available in channels
+
 def video_details(video_ids):
     video_informations=[]
     for video_id in video_ids:
@@ -53,6 +62,9 @@ def video_details(video_ids):
                 video_duration= i['contentDetails']['duration'])
         video_informations.append(data)
     return video_informations
+
+#getting comment details of each video
+
 def comment_details(Video_ids):
     Comment_info=[]
     try:
@@ -69,6 +81,9 @@ def comment_details(Video_ids):
         return Comment_info
     except:
         pass
+        
+#storing data in mongodb
+
 import pymongo
 connection = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
 db = connection['Youtube_Project']
@@ -88,6 +103,9 @@ connection=mysql.connector.connect(
     database = 'Youtube_Project' #using database d101
 )
 cursor = connection.cursor()
+
+#creating and storing channel details in channel table
+
 def Channels_Table():
     connection=mysql.connector.connect(
     host='localhost',
@@ -125,6 +143,9 @@ def Channels_Table():
                 y['channel_videos'])
         cursor.execute(query,values)
         connection.commit()
+        
+#creating and storing video details in video table
+
 def Videos_Table():
     connection=mysql.connector.connect(
     host='localhost',
@@ -172,6 +193,9 @@ def Videos_Table():
         
         cursor.execute(query,values)
         connection.commit()
+
+#creating and storing comment details in comments table
+
 def Comments_Table():
     connection=mysql.connector.connect(
     host='localhost',
@@ -223,6 +247,9 @@ def Show_Channel_lists():
         Channel_lists.append(i["Channel_information"])
     df=st.dataframe(Channel_lists)
     return df
+
+#dataframe for channel,video and comments 
+
 def Show_Videos_lists():
     Videos_lists=[]
     for i in db.collection1.find({},{"_id":0,"videos_information":1}):
