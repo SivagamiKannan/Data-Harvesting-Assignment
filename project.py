@@ -349,14 +349,7 @@ elif(Questions=="9.What is the average duration of all videos in each channel, a
     cursor.execute(query9)
     d=cursor.fetchall()
     df9=pd.DataFrame(d,columns=["Vchannel_name","Average_duration"])
-    T9=[]
-    for x,y in df9.iterrows():
-        channel_name=y["Vchannel_name"]
-        average_duration=y["Average_duration"]
-        avg_dur=str(average_duration)
-        T9.append(dict(Channel_name=channel_name,avgduration=avg_dur))
-    df=pd.DataFrame(T9)
-    st.write(df)
+    st.write(df9)
 elif(Questions=="10.Which videos have the highest number of comments, and what are their corresponding channel names?"):
     query10="select video_name,video_comment,vchannel_name from Youtube_videos where video_comment is not null order by video_comment desc"
     cursor.execute(query10)
