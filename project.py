@@ -241,15 +241,15 @@ def tables():
     Videos_Table()
     Comments_Table()
     return "Tables are created successfully"
+
+#dataframe for channel,video and comments 
+
 def Show_Channel_lists():
     Channel_lists=[]
     for i in db.collection1.find({},{"_id":0,"Channel_information":1}):
         Channel_lists.append(i["Channel_information"])
     df=st.dataframe(Channel_lists)
     return df
-
-#dataframe for channel,video and comments 
-
 def Show_Videos_lists():
     Videos_lists=[]
     for i in db.collection1.find({},{"_id":0,"videos_information":1}):
